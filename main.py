@@ -14,7 +14,7 @@ def home():
 
 def run_server():
     try:
-        app.run(host='0.0.0.0', port=3000)
+        app.run(host='0.0.0.0', port=8000)
     except OSError as e:
         print(f"Could not start server: {e}")
         exit(1)
