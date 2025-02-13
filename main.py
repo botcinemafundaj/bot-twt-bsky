@@ -84,7 +84,7 @@ def get_latest_tweet():
             print(f"An unexpected error occurred: {e}")
 
     print("All Nitter instances failed")
-    return None
+    return tweet_text, image_url  # Return both text and image URL (even if image_url is None)
 # function to verify bluesky credentials
 def verify_bluesky_credentials():
     global bsky_client  # Access the global client
@@ -102,19 +102,9 @@ def post_to_bluesky(text, image_url=None):  # Add image_url parameter
     if bsky_client:
         try:
             if image_url:
-                try:
-                    image_response = requests.get(image_url, stream=True)
-                    image_response.raise_for_status()
-                    bsky_client.send_post(text, images=[{"image": image_response.raw, "alt": "Tweet Image"}])
-                    print("Posted to Bluesky with image:", text, image_url)
-                except requests.exceptions.RequestException as e:
-                    print(f"Error downloading image: {e}")
-                    bsky_client.send_post(text)  # Post without image
-                    print("Posted to Bluesky WITHOUT image (download failed):", text)
-                except Exception as e:
-                    print(f"Error posting to Bluesky with image: {e}")
-                    bsky_client.send_post(text)  # Post without image
-                    print("Posted to Bluesky WITHOUT image (post with image failed):", text)
+                text_with_image_link = f"{text}\n\nImage: {image_url}"  # Add image link to the text
+                bsky_client.send_post(text_with_image_link) # Post the modified text
+                print("Posted to Bluesky with image link:", text_with_image_link)
             else:
                 bsky_client.send_post(text)
                 print("Posted to Bluesky:", text)
@@ -141,6 +131,5 @@ while True:
             print("Latest tweet fetched:", tweet, image_url)
             last_tweet = tweet
             last_image_url = image_url
-    time.sleep(15)    
-
+    time.sleep(15)
 
