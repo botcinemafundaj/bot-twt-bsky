@@ -1,4 +1,4 @@
-atproto
-requests
-beautifulsoup4
 flask
+requests
+atproto
+beautifulsoup4
