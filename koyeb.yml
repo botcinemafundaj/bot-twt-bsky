@@ -1,0 +1,11 @@
+name: x-to-bsky-bot
+type: web
+region: fra
+build:
+  type: python
+  command: pip install -r requirements.txt
+run:
+  command: python main.py
+routes:
+  - src: /
+    dest: /
