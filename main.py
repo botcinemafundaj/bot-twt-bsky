@@ -140,11 +140,11 @@ brasilia_tz = pytz.timezone('America/Sao_Paulo')
 # Global variables for fast interval
 fast_interval = False
 fast_interval_end_time = None
-last_tweet_check_time = None  # Track the time of the last tweet check
+last_tweet_check_time = None
 last_tweet = ""
 last_image_url = ""
 
-# Main loop function (runs in a separate thread)
+# Main loop function (now runs in the *same* thread as Flask)
 def main_loop():
     global fast_interval, fast_interval_end_time, last_tweet_check_time, last_tweet, last_image_url
 
@@ -197,4 +197,4 @@ def main_loop():
             print("Outside of operating hours (8 AM - 6 PM Brasília). Sleeping for 1 hour.")
 
 # Flask route to display posted tweets as JSON
-@app.route
+@app.route('/posted_tweets')
