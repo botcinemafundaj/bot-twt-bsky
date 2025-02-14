@@ -122,9 +122,10 @@ def post_to_bluesky(text, image_url=None, tweet_id=None):
                 print("Posted to Bluesky:", text)
 
             if tweet_id:
-                posted_tweets.append(tweet_id)
-                save_posted_tweets(posted_tweets)
-                print(f"Saved tweet ID: {tweet_id}")
+                with posted_tweets_lock:  # Acquire the lock
+                    posted_tweets.append(tweet_id)
+                    save_posted_tweets(posted_tweets)
+                    print(f"Saved tweet ID: {tweet_id}")
 
         except Exception as e:
             print(f"Error posting to Bluesky: {e}")
@@ -143,6 +144,9 @@ fast_interval_end_time = None
 last_tweet_check_time = None
 last_tweet = ""
 last_image_url = ""
+
+# Lock to protect shared resources (posted_tweets)
+posted_tweets_lock = threading.Lock()
 
 # Main loop function (now runs in the *same* thread as Flask)
 def main_loop():
@@ -166,21 +170,22 @@ def main_loop():
                 tweet, image_url = tweet_data
                 tweet_id = hashlib.md5(tweet.encode('utf-8')).hexdigest()
 
-                if tweet and (tweet != last_tweet or image_url != last_image_url) and tweet_id not in posted_tweets:
-                    post_to_bluesky(tweet, image_url, tweet_id)
-                    print("Latest tweet fetched:", tweet, image_url)
-                    last_tweet = tweet
-                    last_image_url = image_url
+                with posted_tweets_lock:  # Acquire the lock
+                    if tweet and (tweet != last_tweet or image_url != last_image_url) and tweet_id not in posted_tweets:
+                        post_to_bluesky(tweet, image_url, tweet_id)
+                        print("Latest tweet fetched:", tweet, image_url)
+                        last_tweet = tweet
+                        last_image_url = image_url
 
-                    if not fast_interval:
-                        fast_interval = True
-                        fast_interval_end_time = now + datetime.timedelta(minutes=50)
-                        print("Switching to fast interval (30s) for 50 minutes.")
+                        if not fast_interval:
+                            fast_interval = True
+                            fast_interval_end_time = now + datetime.timedelta(minutes=50)
+                            print("Switching to fast interval (30s) for 50 minutes.")
 
-                elif tweet_id in posted_tweets:
-                    print("Duplicate Tweet Found. Skipping.")
-                else:
-                    print("No new unique tweets found.")
+                    elif tweet_id in posted_tweets:
+                        print("Duplicate Tweet Found. Skipping.")
+                    else:
+                        print("No new unique tweets found.")
 
                 if fast_interval and now >= fast_interval_end_time:  # Check if 50 minutes have passed
                     fast_interval = False
@@ -193,8 +198,4 @@ def main_loop():
                 print("No new tweets for 12 minutes. Switching back to normal interval (15min).")
 
         else:  # Outside operating hours
-            sleep(60 * 60)
-            print("Outside of operating hours (8 AM - 6 PM Brasília). Sleeping for 1 hour.")
-
-# Flask route to display posted tweets as JSON
-@app.route('/posted_tweets')
+            sleep
