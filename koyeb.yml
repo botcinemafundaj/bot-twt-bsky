@@ -1,13 +1,15 @@
 services:
-  - name: x-to-bsky-bot  # Your service name
+  - name: x-to-bsky-bot
     image: python:3.9-slim-buster  # Or a suitable Python image
     ports:
       - 8000:8000  # Map container port 8000 to Koyeb port 8000
     build:
       type: python
-      build_command: pip install -r requirements.txt && gunicorn main:app --bind:8000 # Use Gunicorn
+      build_command: pip install -r requirements.txt
+    run:
+      command: python main.py
     env:
-      - BSKY_HANDLE=${BSKY_HANDLE}  # Use Koyeb secrets
+      - BSKY_HANDLE=${BSKY_HANDLE}
       - BSKY_APP_PASSWORD=${BSKY_APP_PASSWORD}
     routes:
       - src: /
