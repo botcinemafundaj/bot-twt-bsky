@@ -192,21 +192,3 @@ while True:
 @app.route('/posted_tweets')
 def show_posted_tweets():
     return render_template('posted_tweets.html', tweets=posted_tweets)
-
-# Create templates/posted_tweets.html:
-"""
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Posted Tweets</title>
-</head>
-<body>
-    <h1>Posted Tweets</h1>
-    <ul>
-        {% for tweet_id in tweets %}
-            <li>{{ tweet_id }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
-"""
