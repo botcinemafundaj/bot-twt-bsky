@@ -5,6 +5,7 @@ import time
 import random  
 from flask import Flask
 import threading
+from time import sleep
 
 app = Flask(__name__)
 
@@ -121,7 +122,8 @@ if not verify_bluesky_credentials():
 # main loop
 last_tweet = ""
 last_image_url = ""
-while True:
+while True:]
+    sleep(30)
     tweet_data = get_latest_tweet()
     if tweet_data:
         tweet, image_url = tweet_data
@@ -131,5 +133,4 @@ while True:
             print("Latest tweet fetched:", tweet, image_url)
             last_tweet = tweet
             last_image_url = image_url
-    time.sleep(15)
 
