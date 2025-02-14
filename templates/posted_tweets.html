@@ -1,4 +1,3 @@
-"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,11 +5,20 @@
 </head>
 <body>
     <h1>Posted Tweets</h1>
-    <ul>
-        {% for tweet_id in tweets %}
-            <li>{{ tweet_id }}</li>
-        {% endfor %}
+    <ul id="tweet-list">
     </ul>
+
+    <script>
+        fetch('/posted_tweets')
+            .then(response => response.json())
+            .then(tweets => {
+                const tweetList = document.getElementById('tweet-list');
+                tweets.forEach(tweetId => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = tweetId;
+                    tweetList.appendChild(listItem);
+                });
+            });
+    </script>
 </body>
 </html>
-"""
