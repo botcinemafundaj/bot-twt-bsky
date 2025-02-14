@@ -1,4 +1,5 @@
-flask
 requests
-atproto
 beautifulsoup4
+atproto
+flask
+pytz
